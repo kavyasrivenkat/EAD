@@ -1,26 +1,34 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const cors=require('cors')
-const alienRouter = require('./routes/aliens')
-
-
-//const url = "mongodb://127.0.0.1:27017/MGIT";
-//const url = 'mongodb://127.0.0.1:27020,127.0.0.1:27021,127.0.0.1:27022/cbitit1?replicaSet=m101';
-const url   = "mongodb+srv://xxxxxxx:xxxx@cbit.phtef.mongodb.net/?retryWrites=true&w=majority&appName=cbit";
-const app = express()
-mongoose.connect(url)
-const con = mongoose.connection
-
-
-con.on('open', () =>
-{
-console.log('connected...')
-})
-app.use(cors())
-app.use(express.json())
-
-app.use('/aliens',alienRouter)
-app.listen(9000, () =>
-{
-console.log('Server started')
-})
+function Solve(val) {
+   var v = document.getElementById('res');
+   v.value += val;
+}
+function Result() {
+   var num1 = document.getElementById('res').value;
+   try {
+      var num2 = eval(num1.replace('x', '*'));
+      document.getElementById('res').value = num2;
+   } catch {
+      document.getElementById('res').value = 'Error';
+   }
+}
+function Clear() {
+   var inp = document.getElementById('res');
+   inp.value = '';
+}
+function Back() {
+   var ev = document.getElementById('res');
+   ev.value = ev.value.slice(0, -1);
+}
+document.addEventListener('keydown', function (event) {
+   const key = event.key;
+   const validKeys = '0123456789+-*/.%';
+   if (validKeys.includes(key)) {
+      Solve(key === '*' ? 'x' : key);
+   } else if (key === 'Enter') {
+      Result();
+   } else if (key === 'Backspace') {
+      Back();
+   } else if (key.toLowerCase() === 'c') {
+      Clear();
+   }
+});
