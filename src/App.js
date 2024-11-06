@@ -1,38 +1,53 @@
-import React, { useState } from "react"; 
-import validator from 'validator'
+import React, { useState, useEffect } from 'react';
 
-const App = () => { 
+const Timer = () => {
+  const [seconds, setSeconds] = useState(0);  // Start from 0 seconds
+  const [isActive, setIsActive] = useState(false);
 
-	const [errorMessage, setErrorMessage] = useState('') 
+  useEffect(() => {
+    let interval = null;
 
-	const validate = (value) => { 
+    if (isActive) {
+      interval = setInterval(() => {
+        setSeconds((prevSeconds) => prevSeconds + 1);  // Count up instead of down
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
 
-		if (validator.isStrongPassword(value, { 
-			minLength: 8, minLowercase: 1, 
-			minUppercase: 1, minNumbers: 1, minSymbols: 1 
-		})) { 
-			setErrorMessage('Is Strong Password') 
-		} else { 
-			setErrorMessage('Is Not Strong Password') 
-		} 
-	} 
+    return () => clearInterval(interval);
+  }, [isActive]);
 
-	return ( 
-		<div style={{ 
-			marginLeft: '200px', 
-		}}> 
-			<pre> 
-				<h2>Checking Password Strength in ReactJS</h2> 
-				<span>Enter Password: </span><input type="text"
-					onChange={(e) => validate(e.target.value)}></input> <br /> 
-				{errorMessage === '' ? null : 
-					<span style={{ 
-						fontWeight: 'bold', 
-						color: 'red', 
-					}}>{errorMessage}</span>} 
-			</pre> 
-		</div> 
-	); 
-} 
+  const handleStart = () => {
+    setIsActive(true);
+  };
 
-export default App
+  const handlePause = () => {
+    setIsActive(false);
+  };
+
+  const handleReset = () => {
+    setIsActive(false);
+    setSeconds(0);  // Reset the timer to 0
+  };
+
+  const formatTime = (totalSeconds) => {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
+  return (
+    <div style={{ textAlign: 'center', padding: '20px' }}>
+      <h1>React Timer</h1>
+      <h2>{formatTime(seconds)}</h2>
+      <div>
+        <button onClick={handleStart} disabled={isActive}>Start</button>
+        <button onClick={handlePause} disabled={!isActive}>Pause</button>
+        <button onClick={handleReset}>Reset</button>
+      </div>
+    </div>
+  );
+};
+
+export default Timer;
